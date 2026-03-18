@@ -9,6 +9,7 @@ import argparse
 import sys
 from pathlib import Path
 
+
 # auxiliary fn
 def matrix2pbm(matrix: list[list[int]], filename: str):
     """
@@ -40,17 +41,34 @@ def matrix2pbm(matrix: list[list[int]], filename: str):
         print(f"An error occurred while saving: {e}")
         sys.exit(1)
 
+
+def set_square(matrix: list[list[int]], color: str, x1: int, y1: int, x2: int, y2: int):
+    """
+    Sets the pixels in the range [x1, x2] and [y1, y2] (inclusive)
+    to the target color bit.
+    """
+    color_map = {"white": 0, "w": 0, "black": 1, "b": 1}
+    target_bit = color_map.get(color.lower())
+
+    if target_bit is None:
+        raise ValueError("Invalid color for flipping.")
+
+    # Inclusive range processing
+    for y in range(y1, y2 + 1):
+        for x in range(x1, x2 + 1):
+            matrix[y][x] = target_bit
+
+
 def create_pbm_matrix(color_choice: str, size: int, filename: str):
     # 1. Map Input Color to Native PBM bits
     # 0 is White, 1 is Black
-    color_map = {
-        'white': 0, 'w': 0,
-        'black': 1, 'b': 1
-    }
+    color_map = {"white": 0, "w": 0, "black": 1, "b": 1}
 
     fill_value = color_map.get(color_choice.lower())
     if fill_value is None:
-        print(f"Error: Invalid color '{color_choice}'. Use 'black', 'white', 'b', or 'w'.")
+        print(
+            f"Error: Invalid color '{color_choice}'. Use 'black', 'white', 'b', or 'w'."
+        )
         sys.exit(1)
 
     # 2. Initialize the in-memory matrix with the native bit
@@ -58,6 +76,7 @@ def create_pbm_matrix(color_choice: str, size: int, filename: str):
 
     # 3. Save to file
     matrix2pbm(matrix, filename)
+
 
 # main program
 if __name__ == "__main__":
